@@ -16,7 +16,7 @@ const houses = [];
 const { CHAT_ID, BOT_API } = process.env;
 
 const urls = [
-    'https://www.funda.nl/en/huur/utrecht/0-1250/+15km/sorteer-datum-af/',
+    'https://www.funda.nl/en/huur/utrecht/0-1250/+10km/sorteer-datum-af/',
     'https://www.funda.nl/en/huur/nieuwegein/0-1250/1-dag/+5km/sorteer-datum-af/',
 ];
 
