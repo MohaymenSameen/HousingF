@@ -115,11 +115,11 @@ const runPuppeteer = async (url) => {
 
 
     console.log('parsing funda.nl data');
-    const result = dom.window.document.querySelectorAll('.search-result');
+    const result = dom.window.document.querySelectorAll('.search-result-item');
     for (const element of result) {
         const urlPath = element?.querySelectorAll('a')?.[0]?.href;
-        const headerSubtitle = element?.querySelector('.search-result__header-subtitle');
-        const subtitleText = headerSubtitle?.innerHTML?.trim();
+        // const headerSubtitle = element?.querySelector('.search-result__header-subtitle');
+        // const subtitleText = headerSubtitle?.innerHTML?.trim();
 
         let path = urlPath;
         if (!path.includes('https://www.funda.nl')) {
@@ -129,7 +129,7 @@ const runPuppeteer = async (url) => {
         path = path.replace('?navigateSource=resultlist', '');
         if (path && !pastResults.has(path) && !newResults.has(path)) {
             let extraDetails = {};
-            const zipCode = getZipCode(subtitleText || '');
+            const zipCode = getZipCode("subtitleText" || '');
 
             if (zipCode) {
                 const neighbourhoodData = await getNeighbourhoodData(zipCode);
