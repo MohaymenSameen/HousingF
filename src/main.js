@@ -11,8 +11,6 @@ const HEIGHT = 1080;
 const data = readFileSync('db.json', { encoding: 'utf8', flag: 'r' });
 const pastResults = new Set(JSON.parse(data) || []);
 console.log('pastResults:', pastResults);
-const newResults = new Set();
-const houses = [];
 const { CHAT_ID, BOT_API } = process.env;
 
 const urls = [
@@ -63,18 +61,10 @@ const runPuppeteer = async (url) => {
             console.log(`Search result ${index + 1}: ${content}, Href: ${href}`);
             // Perform any additional actions you want with each search result item
 
-
-            nodeFetch(`https://api.telegram.org/bot${BOT_API}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    href,
-                    chat_id: CHAT_ID,
-                    parse_mode: 'markdown',
-                }),
-            });
+            // Construct the message text
+            const message = `Search result ${index + 1}: ${content}\nHref: ${href}`;
+            sendTelegramMessage(message);
+           
         });
     } else {
         // No results found, handle this case accordingly.
@@ -90,4 +80,30 @@ if (CHAT_ID && BOT_API) {
     runTask();
 } else {
     console.log('Missing Telegram API keys!');
+}
+
+async function sendTelegramMessage(message) {
+    const url = `https://api.telegram.org/bot${BOT_API}/sendMessage`;
+    const data = {
+        chat_id: CHAT_ID,
+        text: message,
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            console.log('Message sent successfully to Telegram!');
+        } else {
+            console.log('Failed to send message to Telegram:', response.status, response.statusText);
+        }
+    } catch (error) {
+        console.error('Error sending message to Telegram:', error);
+    }
 }
