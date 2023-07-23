@@ -116,7 +116,7 @@ const runPuppeteer = async (url) => {
 
 
     console.log('parsing funda.nl data');
-    const result = dom.window.document.querySelectorAll('.search-result-item');
+    const result = dom.window.document.querySelectorAll('[data-test-id="search-result-item"]');
 
     if (result.length > 0) {
         // Results found, do something with the elements.
