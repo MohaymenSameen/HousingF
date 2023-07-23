@@ -118,15 +118,15 @@ const runPuppeteer = async (url) => {
     console.log('parsing funda.nl data');
     const result = dom.window.document.querySelectorAll('.search-result-item');
 
-    if (Object.keys(result).length === 0 && result.constructor === Object)
-    {
-        console.log('no results')
-    }
-    else
-    {
-        console.log('results present')
-
-    }
+    if (searchResultItems.length > 0) {
+        // Results found, do something with the elements.
+        console.log(`Found ${searchResultItems.length} search result items.`);
+        // You can access the elements through the collection, e.g., searchResultItems[0] to get the first element.
+      } else {
+        // No results found, handle this case accordingly.
+        console.log('No search result items found.');
+      }
+      
     for (const element of result) {
         const urlPath = element?.querySelectorAll('a')?.[0]?.href;
         // const headerSubtitle = element?.querySelector('.search-result__header-subtitle');
