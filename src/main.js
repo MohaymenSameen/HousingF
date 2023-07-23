@@ -15,7 +15,7 @@ const storageFile = 'previous_results.json';
 const { CHAT_ID, BOT_API } = process.env;
 
 const urls = [
-    'https://www.funda.nl/zoeken/huur?selected_area=%5B%22utrecht,15km%22%5D&publication_date=%223%22&price=%22-1250%22'
+    'https://www.funda.nl/zoeken/huur?selected_area=%5B%22utrecht,15km%22%5D&publication_date=%223%22'
 ];
 
 // Load the previous results from the storage
