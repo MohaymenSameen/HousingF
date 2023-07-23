@@ -118,7 +118,7 @@ const runPuppeteer = async (url) => {
     console.log('parsing funda.nl data');
     const result = dom.window.document.querySelectorAll('.search-result-item');
 
-    if (Object.keys(empty).length === 0 && empty.constructor === Object)
+    if (Object.keys(result).length === 0 && result.constructor === Object)
     {
         console.log('no results')
     }
