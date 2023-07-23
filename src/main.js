@@ -3,13 +3,13 @@ const { writeFileSync, readFileSync } = require('fs');
 const puppeteer = require('puppeteer');
 const jsdom = require('jsdom');
 const nodeFetch = require('node-fetch');
-const { getZipCode, getNeighbourhoodData, convertResidentsToPercentage} = require('./utils/utils');
+const { getZipCode, getNeighbourhoodData, convertResidentsToPercentage } = require('./utils/utils');
 const { Console } = require('console');
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
 
-const data = readFileSync('db.json', { encoding:'utf8', flag: 'r' });
+const data = readFileSync('db.json', { encoding: 'utf8', flag: 'r' });
 const pastResults = new Set(JSON.parse(data) || []);
 console.log('pastResults:', pastResults);
 const newResults = new Set();
@@ -85,8 +85,8 @@ shareOfTurkey: **${shareOfTurkey}**
                 },
                 body: JSON.stringify({
                     text,
-                    chat_id : CHAT_ID,
-                    parse_mode : 'markdown',
+                    chat_id: CHAT_ID,
+                    parse_mode: 'markdown',
                 }),
             });
         });
@@ -119,17 +119,22 @@ const runPuppeteer = async (url) => {
     const result = dom.window.document.querySelectorAll('[data-test-id="search-result-item"]');
 
     if (result.length > 0) {
-        // Results found, do something with the elements.
-        console.log(`Found ${result.length} search result items.`);
-        // You can access the elements through the collection, e.g., searchResultItems[0] to get the first element.
-
+        console.log(`Found ${result.length} search result items:`);
         result.forEach((item, index) => {
-            console.log(`Result ${index + 1}:`, item.textContent);
+            // Get the text content of the search result item
+            const content = item.textContent;
+
+            // Get the href value of the anchor tag inside the search result item
+            const anchorElement = item.querySelector('a'); // Assuming the anchor is a direct child
+            const href = anchorElement ? anchorElement.getAttribute('href') : 'No href found';
+
+            console.log(`Search result ${index + 1}: ${content}, Href: ${href}`);
+            // Perform any additional actions you want with each search result item
         });
-      } else {
+    } else {
         // No results found, handle this case accordingly.
         console.log('No search result items found.');
-      }
+    }
 
     for (const element of result) {
         const urlPath = element?.querySelectorAll('a')?.[0]?.href;
