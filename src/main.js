@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const jsdom = require('jsdom');
 const nodeFetch = require('node-fetch');
 const { Console } = require('console');
+const fs = require('fs');
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
