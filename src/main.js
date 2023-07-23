@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const jsdom = require('jsdom');
 const nodeFetch = require('node-fetch');
 const { getZipCode, getNeighbourhoodData, convertResidentsToPercentage} = require('./utils/utils');
+const { Console } = require('console');
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
@@ -116,8 +117,17 @@ const runPuppeteer = async (url) => {
 
     console.log('parsing funda.nl data');
     const result = dom.window.document.querySelectorAll('.search-result-item');
+
+    if (Object.keys(empty).length === 0 && empty.constructor === Object)
+    {
+        console.log('no results')
+    }
+    else
+    {
+        console.log('results present')
+
+    }
     for (const element of result) {
-        console.log(element)
         const urlPath = element?.querySelectorAll('a')?.[0]?.href;
         // const headerSubtitle = element?.querySelector('.search-result__header-subtitle');
         // const subtitleText = headerSubtitle?.innerHTML?.trim();
