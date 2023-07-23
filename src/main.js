@@ -8,14 +8,26 @@ const { Console } = require('console');
 const WIDTH = 1920;
 const HEIGHT = 1080;
 
-const data = readFileSync('db.json', { encoding: 'utf8', flag: 'r' });
-const pastResults = new Set(JSON.parse(data) || []);
-console.log('pastResults:', pastResults);
+// JSON file to store the previous results
+const storageFile = 'previous_results.json';
+
 const { CHAT_ID, BOT_API } = process.env;
 
 const urls = [
-    'https://www.funda.nl/zoeken/huur?selected_area=%5B%22utrecht,15km%22%5D&publication_date=%223%22'
+    'https://www.funda.nl/zoeken/huur?selected_area=%5B%22utrecht,15km%22%5D&publication_date=%223%22&price=%22-1250%22'
 ];
+
+// Load the previous results from the storage
+let previousResults = [];
+try {
+    if (fs.existsSync(storageFile)) {
+        const fileContent = fs.readFileSync(storageFile, 'utf8');
+        previousResults = JSON.parse(fileContent);
+    }
+} catch (error) {
+    console.error('Error loading previous results:', error);
+}
+
 
 const runTask = async () => {
     for (const url of urls) {
@@ -49,8 +61,8 @@ const runPuppeteer = async (url) => {
     const result = dom.window.document.querySelectorAll('[data-test-id="search-result-item"]');
 
     if (result.length > 0) {
-        console.log(`Found ${result.length} search result items:`);
-        result.forEach((item, index) => {
+        const newResults = [];
+        result.forEach((item) => {
             // Get the text content of the search result item
             const content = item.textContent;
 
@@ -58,17 +70,29 @@ const runPuppeteer = async (url) => {
             const anchorElement = item.querySelector('a'); // Assuming the anchor is a direct child
             const href = anchorElement ? anchorElement.getAttribute('href') : 'No href found';
 
-            console.log(`Search result ${index + 1}: ${content}, Href: ${href}`);
-            // Perform any additional actions you want with each search result item
-
-            // Construct the message text
-            const message = `Search result ${index + 1}: ${content}\nHref: ${href}`;
-            sendTelegramMessage(message);
-           
+            // Check if the result is already in the previous results list
+            if (!previousResults.some((result) => result.href === href)) {
+                newResults.push({ content, href });
+            }
         });
+
+        if (newResults.length > 0) {
+            newResults.forEach((result, index) => {
+                // Construct the message text
+                const message = `New search result ${index + 1}: ${result.content}\nHref: ${result.href}`;
+
+                // Send the message to the Telegram Bot API
+                sendTelegramMessage(message);
+            });
+
+            // Update the storage with the new results
+            previousResults = [...previousResults, ...newResults];
+            fs.writeFileSync(storageFile, JSON.stringify(previousResults), 'utf8');
+        } else {
+            console.log('No new search results found.');
+        }
     } else {
-        // No results found, handle this case accordingly.
-        console.log('No search result items found.');
+        console.log('No search results found.');
     }
 
 
